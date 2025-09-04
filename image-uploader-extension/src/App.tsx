@@ -1,14 +1,31 @@
 import { FiUploadCloud } from 'react-icons/fi'
 import './App.css'
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 
 function App() {
 
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [droppedFile, setDroppedFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/jpeg',]
+
+  useEffect(() => {
+
+    let fileUrl: string | null = null;
+    if (droppedFile) {
+      fileUrl = URL.createObjectURL(droppedFile);
+      setImageUrl(fileUrl);
+    }
+
+    return () => {
+      if (fileUrl) {
+        URL.revokeObjectURL(fileUrl);
+      }
+    }
+  }, [droppedFile])
 
   const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -44,6 +61,21 @@ function App() {
         setDroppedFile(null);
         setTimeout(() => { setError(null) }, 3000);
       }
+    }
+  };
+
+  const removeFile = () => {
+    setDroppedFile(null);
+    setImageUrl(null);
+  }
+
+  const dropzoneVariants = {
+    initial: { backgroundColor: "#ffffff" },
+    dragging: { backgroundColor: "#eff6ff", scale: 1.05 },
+    error: {
+      backgroundColor: "#fee2e2",
+      borderColor: "#ef4444",
+      x: [0, -10, 10, -10, 10, 0]
     }
   };
 
