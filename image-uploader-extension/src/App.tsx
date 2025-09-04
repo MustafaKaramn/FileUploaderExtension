@@ -1,7 +1,7 @@
-import { FiUploadCloud } from 'react-icons/fi'
+import { FiAlertCircle, FiCheckCircle, FiUploadCloud, FiX } from 'react-icons/fi'
 import './App.css'
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 function App() {
 
@@ -81,17 +81,65 @@ function App() {
 
   return (
     <div className='container'>
-      <div className='dropzone'
+      <motion.div className='dropzone'
+        variants={dropzoneVariants}
+        animate={error ? "error" : isDragging ? "dragging" : "initial"}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
-        <FiUploadCloud size={50} />
-        <p>Dosyanızı buraya sürükleyin</p>
-        <span>veya</span>
-        <button>Dosya seç</button>
-      </div>
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              className="status-indicator error"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+            >
+              <FiAlertCircle size={50} />
+              <p>{error}</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {!error && !droppedFile && (
+            <motion.div
+              className="status-indicator"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <FiUploadCloud size={50} />
+              <p>Dosyanızı buraya sürükleyin</p>
+              <span>veya</span>
+              <button type="button">Dosya Seç</button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {droppedFile && imageUrl && !error && (
+            <motion.div
+              className="image-preview"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+            >
+              <img src={imageUrl} alt={droppedFile.name} />
+              <button onClick={removeFile} className="remove-btn">
+                <FiX />
+              </button>
+              <div className="file-info">
+                <FiCheckCircle className="success-icon" />
+                <span>Yüklendi!</span>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     </div>
   );
 }
