@@ -1,6 +1,6 @@
 import { FiAlertCircle, FiCheckCircle, FiUploadCloud, FiX } from 'react-icons/fi'
 import './App.css'
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 function App() {
@@ -9,8 +9,21 @@ function App() {
   const [droppedFile, setDroppedFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/jpeg',]
+
+  const processFile = (file: File) => {
+    setError(null);
+
+    if (ALLOWED_TYPES.includes(file.type)) {
+      setDroppedFile(file);
+    } else {
+      setError("Yalnızca resim dosyaları kabul edilir!");
+      setDroppedFile(null);
+      setTimeout(() => setError(null), 4000);
+    }
+  };
 
   useEffect(() => {
 
@@ -48,19 +61,23 @@ function App() {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
-    setError(null);
 
-    const file = e.dataTransfer.files && e.dataTransfer.files[0];
-
+    const file = e.dataTransfer.files?.[0];
     if (file) {
-      if (ALLOWED_TYPES.includes(file.type)) {
-        setDroppedFile(file);
-      }
-      else {
-        setError("Yalnızca resim dosyaları kabul edilir!")
-        setDroppedFile(null);
-        setTimeout(() => { setError(null) }, 3000);
-      }
+      processFile(file);
+    }
+  };
+
+  // Butona tıklandığında gizli input'u tetikler
+  const handleButtonClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  // Gizli input'tan dosya seçildiğinde çalışır
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      processFile(file);
     }
   };
 
@@ -115,7 +132,16 @@ function App() {
             <FiUploadCloud size={50} />
             <p>Dosyanızı buraya sürükleyin</p>
             <span>veya</span>
-            <button type="button">Dosya Seç</button>
+
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileSelect}
+              style={{ display: 'none' }}
+              accept="image/png, image/jpeg, image/jpg, image/webp, image/gif"
+            />
+
+            <button type="button" onClick={handleButtonClick}>Dosya Seç</button>
           </motion.div>
         )}
       </AnimatePresence>
