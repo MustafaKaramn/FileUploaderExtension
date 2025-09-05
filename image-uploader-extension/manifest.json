@@ -5,6 +5,17 @@
   "action": {
     "default_popup": "index.html"
   },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.youtube.com/*",
+        "https://kick.com/*",
+        "https://www.twitch.tv/*"
+      ],
+      "js": ["src/content.ts"],
+      "run_at": "document_end"
+    }
+  ],
   "host_permissions": [
     "http://localhost:5173/*"
   ]
