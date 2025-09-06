@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import "./ImagePreviewPopup.css";
 
 interface ImagePreviewPopupProps {
     imageUrl: string;

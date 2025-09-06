@@ -13,7 +13,6 @@
         "https://www.twitch.tv/*"
       ],
       "js": ["src/content.tsx"],
-      "css": ["src/content.css"],
       "run_at": "document_end"
     }
   ],
