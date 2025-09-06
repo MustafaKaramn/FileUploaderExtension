@@ -1,7 +1,7 @@
-import { FiAlertCircle, FiCheckCircle, FiUploadCloud, FiX } from 'react-icons/fi'
+import { FiAlertCircle, FiUploadCloud } from 'react-icons/fi'
 import './App.css'
-import { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useRef, useState } from 'react';
+import { AnimatePresence, motion, type Variants } from 'framer-motion';
 import { validateFile } from './utils/fileValitation';
 import { ImagePreviewPopup } from './components/ImagePreviewPopup';
 
@@ -72,7 +72,7 @@ function App() {
     handleClosePreview();
   };
 
-  const dropzoneVariants = {
+  const dropzoneVariants: Variants = {
     initial: { backgroundColor: "#ffffff" },
     dragging: { backgroundColor: "#eff6ff", scale: 1.05 },
     error: {
