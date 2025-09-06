@@ -3,13 +3,13 @@ import './App.css'
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { validateFile } from './utils/fileValitation';
+import { ImagePreviewPopup } from './components/ImagePreviewPopup';
 
 function App() {
 
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [droppedFile, setDroppedFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const processFile = (file: File) => {
@@ -24,21 +24,6 @@ function App() {
       setTimeout(() => setError(null), 5000);
     }
   };
-
-  useEffect(() => {
-
-    let fileUrl: string | null = null;
-    if (droppedFile) {
-      fileUrl = URL.createObjectURL(droppedFile);
-      setImageUrl(fileUrl);
-    }
-
-    return () => {
-      if (fileUrl) {
-        URL.revokeObjectURL(fileUrl);
-      }
-    }
-  }, [droppedFile])
 
   const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -63,9 +48,7 @@ function App() {
     setIsDragging(false);
 
     const file = e.dataTransfer.files?.[0];
-    if (file) {
-      processFile(file);
-    }
+    if (file) processFile(file);
   };
 
   // Butona tıklandığında gizli input'u tetikler
@@ -76,15 +59,18 @@ function App() {
   // Gizli input'tan dosya seçildiğinde çalışır
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      processFile(file);
-    }
+    if (file) processFile(file);
   };
 
-  const removeFile = () => {
+  const handleClosePreview = () => {
     setDroppedFile(null);
-    setImageUrl(null);
-  }
+  };
+
+  const handleUpload = (fileToUpload: File, storageDays: number) => {
+    console.log(`'${fileToUpload.name}' dosyası, ${storageDays} gün seçeneği ile ana popup'tan yüklenecek.`);
+    // .NET SUNUCUYA YÜKLEME KODU BURAYA GELECEK
+    handleClosePreview();
+  };
 
   const dropzoneVariants = {
     initial: { backgroundColor: "#ffffff" },
@@ -92,80 +78,70 @@ function App() {
     error: {
       backgroundColor: "#fee2e2",
       borderColor: "#ef4444",
-      x: [0, -10, 10, -10, 10, 0]
+      x: [0, -10, 10, -10, 10, 0],
+      transition: {
+        x: { duration: 0.5, ease: "easeInOut" },
+        default: { type: "spring", stiffness: 300, damping: 20 },
+      },
     }
   };
 
   return (
-    <motion.div
-      className='dropzone'
-      variants={dropzoneVariants}
-      animate={error ? "error" : isDragging ? "dragging" : "initial"}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      onDragEnter={handleDragEnter}
-      onDragLeave={handleDragLeave}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
-    >
-      <AnimatePresence>
-        {error && (
-          <motion.div
-            className="status-indicator error"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-          >
-            <FiAlertCircle size={50} />
-            <p style={{fontSize: "0.8rem", maxWidth: "90%"}}>{error}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {!error && !droppedFile && (
-          <motion.div
-            className="status-indicator"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <FiUploadCloud size={50} />
-            <p>Dosyanızı buraya sürükleyin</p>
-            <span>veya</span>
-
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileSelect}
-              style={{ display: 'none' }}
-              accept="image/png, image/jpeg, image/jpg, image/webp, image/gif"
-            />
-
-            <button type="button" onClick={handleButtonClick}>Dosya Seç</button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {droppedFile && imageUrl && !error && (
-          <motion.div
-            className="image-preview"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-          >
-            <img src={imageUrl} alt={droppedFile.name} />
-            <button onClick={removeFile} className="remove-btn">
-              <FiX />
-            </button>
-            <div className="file-info">
-              <FiCheckCircle className="success-icon" />
-              <span>Yüklendi!</span>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+    droppedFile ? (
+      <ImagePreviewPopup
+        file={droppedFile}
+        imageUrl={URL.createObjectURL(droppedFile)}
+        onClose={handleClosePreview}
+        onUpload={handleUpload}
+      />
+    ) : (
+      <motion.div
+        className='dropzone'
+        variants={dropzoneVariants}
+        animate={error ? "error" : isDragging ? "dragging" : "initial"}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+      >
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              className="status-indicator error"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+            >
+              <FiAlertCircle size={50} />
+              <p style={{ fontSize: "0.8rem", maxWidth: "90%" }}>{error}</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {!error && (
+            <motion.div
+              className="status-indicator"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <FiUploadCloud size={50} />
+              <p>Dosyanızı buraya sürükleyin</p>
+              <span>veya</span>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileSelect}
+                style={{ display: 'none' }}
+                accept="image/png, image/jpeg, image/jpg, image/webp, image/gif"
+              />
+              <button type="button" onClick={handleButtonClick}>Dosya Seç</button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    )
   );
 }
 
