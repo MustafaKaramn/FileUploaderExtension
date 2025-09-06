@@ -2,6 +2,7 @@ import { FiAlertCircle, FiCheckCircle, FiUploadCloud, FiX } from 'react-icons/fi
 import './App.css'
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { validateFile } from './utils/fileValitation';
 
 function App() {
 
@@ -11,17 +12,16 @@ function App() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/jpeg',]
-
   const processFile = (file: File) => {
-    setError(null);
+    const validationResult = validateFile(file);
 
-    if (ALLOWED_TYPES.includes(file.type)) {
+    if (validationResult.isValid) {
+      setError(null);
       setDroppedFile(file);
     } else {
-      setError("Yalnızca resim dosyaları kabul edilir!");
       setDroppedFile(null);
-      setTimeout(() => setError(null), 4000);
+      setError(validationResult.error);
+      setTimeout(() => setError(null), 5000);
     }
   };
 
@@ -116,7 +116,7 @@ function App() {
             exit={{ opacity: 0, y: -10 }}
           >
             <FiAlertCircle size={50} />
-            <p>{error}</p>
+            <p style={{fontSize: "0.8rem", maxWidth: "90%"}}>{error}</p>
           </motion.div>
         )}
       </AnimatePresence>

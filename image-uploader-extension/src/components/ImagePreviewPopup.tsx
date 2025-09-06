@@ -3,16 +3,17 @@ import { motion } from 'framer-motion';
 import "./ImagePreviewPopup.css";
 
 interface ImagePreviewPopupProps {
+    file: File,
     imageUrl: string;
     onClose: () => void;
-    onUpload: (storageDays: number) => void;
+    onUpload: (file: File, storageDays: number) => void;
 }
 
-export const ImagePreviewPopup: React.FC<ImagePreviewPopupProps> = ({ imageUrl, onClose, onUpload }) => {
+export const ImagePreviewPopup: React.FC<ImagePreviewPopupProps> = ({ file, imageUrl, onClose, onUpload }) => {
     const [storageDays, setStorageDays] = useState<number>(7);
 
     const handleUploadClick = () => {
-        onUpload(storageDays);
+        onUpload(file, storageDays);
         onClose();
     };
 
@@ -30,7 +31,7 @@ export const ImagePreviewPopup: React.FC<ImagePreviewPopupProps> = ({ imageUrl, 
                 exit={{ scale: 0.7, opacity: 0 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 25 }}
             >
-                <img src={imageUrl} alt="Image Preview" className="cs-preview-image" />
+                <img src={imageUrl} alt={file.name} className="cs-preview-image" />
 
                 <div className="cs-options">
                     <label htmlFor="storage-days">Kaç gün depolansın?</label>
