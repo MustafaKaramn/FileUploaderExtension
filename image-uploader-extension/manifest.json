@@ -12,7 +12,8 @@
         "https://kick.com/*",
         "https://www.twitch.tv/*"
       ],
-      "js": ["src/content.ts"],
+      "js": ["src/content.tsx"],
+      "css": ["src/content.css"],
       "run_at": "document_end"
     }
   ],
