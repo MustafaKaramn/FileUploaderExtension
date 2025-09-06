@@ -1,0 +1,73 @@
+.cs-popup-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 99998;
+  display: grid;
+  place-items: center;
+}
+
+.cs-popup-container {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 380px;
+  font-family: system-ui, sans-serif;
+}
+
+.cs-preview-image {
+  width: 100%;
+  max-height: 250px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.cs-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.cs-options select {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.cs-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.cs-btn {
+  flex-grow: 1;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cs-btn-primary {
+  background-color: #3b82f6;
+  color: white;
+}
+.cs-btn-primary:hover {
+  background-color: #2563eb;
+}
+
+.cs-btn-secondary {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+.cs-btn-secondary:hover {
+  background-color: #d1d5db;
+}
