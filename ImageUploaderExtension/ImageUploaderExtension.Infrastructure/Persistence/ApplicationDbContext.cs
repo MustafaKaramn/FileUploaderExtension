@@ -11,9 +11,12 @@ namespace ImageUploaderExtension.Infrastructure.Persistence
 {
     public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
-        public Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        { }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return base.SaveChangesAsync(cancellationToken);
         }
 
         public DbSet<StoredFile> StoredFiles { get; set; }
