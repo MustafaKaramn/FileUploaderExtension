@@ -2,11 +2,13 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace ImageUploaderExtension.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableRateLimiting("FileUploadPolicy")]
     public class FilesController : ControllerBase
     {
         private readonly ISender _mediator;
