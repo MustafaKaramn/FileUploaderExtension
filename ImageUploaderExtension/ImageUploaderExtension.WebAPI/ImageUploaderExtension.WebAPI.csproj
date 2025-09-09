@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ImageUploaderExtension.Application\ImageUploaderExtension.Application.csproj" />
+    <ProjectReference Include="..\ImageUploaderExtension.Infrastructure\ImageUploaderExtension.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
