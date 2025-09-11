@@ -21,7 +21,7 @@ namespace ImageUploaderExtension.Infrastructure.Services
 
         public async Task<string> SaveFileAsync(Stream fileStream, string fileName, string mimeType)
         {
-            var uploadsFolderPath = Path.Combine(_env.ContentRootPath, "uploads");
+            var uploadsFolderPath = Path.Combine(_env.ContentRootPath, "wwwroot/uploads");
 
             if (!Directory.Exists(uploadsFolderPath))
             {
