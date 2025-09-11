@@ -1,4 +1,5 @@
 ﻿using ImageUploaderExtension.Application.Features.Files.Commands;
+using ImageUploaderExtension.WebAPI.Models;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,19 +20,14 @@ namespace ImageUploaderExtension.WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadFile([FromForm] IFormFile file, int expirationDays)
+        public async Task<IActionResult> UploadFile([FromForm] UploadFileRequest request)
         {
-            if (file == null || file.Length == 0)
-            {
-                return BadRequest("Lütfen bir dosya seçin.");
-            }
-
             var command = new UploadFileCommand
             {
-                ExpirationDays = expirationDays,
-                FileName = file.FileName,
-                MimeType = file.ContentType,
-                FileStream = file.OpenReadStream()
+                ExpirationDays = request.ExpirationDays,
+                FileName = request.File.FileName,
+                MimeType = request.File.ContentType,
+                FileStream = request.File.OpenReadStream()
             };
 
             var filePath = await _mediator.Send(command);
