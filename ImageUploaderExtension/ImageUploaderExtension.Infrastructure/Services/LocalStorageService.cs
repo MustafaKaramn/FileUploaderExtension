@@ -37,7 +37,7 @@ namespace ImageUploaderExtension.Infrastructure.Services
                 await fileStream.CopyToAsync(stream);
             }
 
-            return fullPath;
+            return $"/uploads/{uniqueFileName}";
         }
     }
 }
